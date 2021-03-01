@@ -1,0 +1,95 @@
+version: '3.7'
+services:
+  homeassistant:
+    container_name: home-assistant
+    image: homeassistant/home-assistant
+    volumes:
+      - /home/robert/docker/homeassistant/volumes/homeassistant:/config
+      - /etc/localtime:/etc/localtime:ro
+    restart: unless-stopped
+    network_mode: host
+    depends_on:
+      - mariadb
+      - mosquitto
+      - influxdb
+
+  mariadb:
+    image: mariadb/server:10.3
+    container_name: mariadb
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD}"
+      MYSQL_DATABASE: ha_db
+      MYSQL_USER: homeassistant
+      MYSQL_PASSWORD: "${HA_MYSQL_PASSWORD}"
+    volumes:
+      - /home/robert/docker/homeassistant/volumes/maria_db:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    
+  influxdb:
+    image: influxdb:latest
+    restart: unless-stopped
+    ports:
+      - '8086:8086'
+    volumes:
+      - /home/robert/docker/homeassistant/volumes/influxdb:/var/lib/influxdb
+    environment:
+      - INFLUXDB_DB=db0
+      - INFLUXDB_ADMIN_USER=${INFLUXDB_USERNAME}
+      - INFLUXDB_ADMIN_PASSWORD=${INFLUXDB_PASSWORD}
+
+  mosquitto:
+    image: eclipse-mosquitto
+    restart: unless-stopped
+    hostname: mosquitto
+    container_name: mosquitto
+    ports:
+      - "1883:1883"
+      - "9001:9001"
+    volumes:
+      - /home/robert/docker/homeassistant/volumes/mosquitto/config:/mosquitto/config
+  
+  appdaemon:
+    container_name: appdaemon
+    restart: unless-stopped
+    image: acockburn/appdaemon:latest
+    ports:
+      - "5050:5050"
+    volumes:
+      - /home/robert/docker/homeassistant/volumes/appdaemon:/conf
+      - /home/robert/docker/homeassistant/volumes/homeassistant/appdaemon_apps:/conf/apps/home
+      - /etc/localtime:/etc/localtime:ro
+    depends_on:
+      - homeassistant
+      - mosquitto
+  
+  zigbee2mqtt:
+    container_name: zigbee2mqtt
+    image: koenkk/zigbee2mqtt
+    volumes:
+      - /home/robert/docker/homeassistant/volumes/zigbee2mqtt:/app/data
+      - /run/udev:/run/udev:ro
+    devices:
+      - /dev/ttyACM0:/dev/ttyACM0
+    restart: always
+    network_mode: host
+    privileged: true
+    environment:
+      - TZ=Europe/Amsterdam
+    depends_on:
+      - mosquitto
+
+  zigbee2mqttAssistant:
+    image: carldebilly/zigbee2mqttassistant
+    container_name: zigbee2mqttAssistant
+    environment:
+      - Z2MA_SETTINGS__MQTTSERVER=${SERVER_ADDR}
+      - Z2MA_SETTINGS__MQTTUSERNAME=zigbee2mqtt
+      - Z2MA_SETTINGS__MQTTPASSWORD=${ZIGBEE2MQTT_MOSQUITTO_PASSWORD}
+      - TZ=Europe/Amsterdam
+    ports:
+      - 8880:80
+    restart: unless-stopped
+    depends_on:
+      - zigbee2mqtt
