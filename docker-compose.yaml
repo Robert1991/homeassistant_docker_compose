@@ -64,6 +64,19 @@ services:
       - homeassistant
       - mosquitto
   
+  esphome:
+    container_name: esphome
+    image: esphome/esphome
+    environment:
+      - TZ=America/Los_Angeles
+    network_mode: host
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /home/robert/docker/homeassistant/volumes/homeassistant/esphome:/config
+    depends_on:
+      - mosquitto
+
   zigbee2mqtt:
     container_name: zigbee2mqtt
     image: koenkk/zigbee2mqtt
