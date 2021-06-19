@@ -68,14 +68,14 @@ services:
   
   esphome:
     container_name: esphome
-    image: esphome/esphome
+    image: esphome/esphome:latest
     environment:
-      - TZ=America/Los_Angeles
+      - TZ=Europe/Amsterdam
     network_mode: host
     restart: unless-stopped
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /home/robert/docker/homeassistant/volumes/homeassistant/esphome:/config
+      - /home/robert/docker/homeassistant/volumes/homeassistant/esphome:/config:rw
     depends_on:
       - mosquitto
 
