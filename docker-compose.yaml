@@ -5,6 +5,7 @@ services:
     image: homeassistant/home-assistant
     volumes:
       - /home/robert/docker/homeassistant/volumes/homeassistant:/config
+      - /home/robert/docker/homeassistant/certificates:/config/certificates
       - /etc/localtime:/etc/localtime:ro
     restart: unless-stopped
     network_mode: host
