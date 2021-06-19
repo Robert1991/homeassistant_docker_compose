@@ -60,6 +60,7 @@ services:
     volumes:
       - /home/robert/docker/homeassistant/volumes/appdaemon:/conf
       - /home/robert/docker/homeassistant/volumes/homeassistant/appdaemon_apps:/conf/apps/home
+      - /home/robert/docker/homeassistant/volumes/homeassistant:/conf/homeassistant
       - /etc/localtime:/etc/localtime:ro
     depends_on:
       - homeassistant
