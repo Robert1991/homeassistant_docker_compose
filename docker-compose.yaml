@@ -83,7 +83,7 @@ services:
     container_name: zigbee2mqtt
     image: koenkk/zigbee2mqtt
     volumes:
-      - /home/robert/docker/homeassistant/volumes/zigbee2mqtt:/app/data
+      - /home/robert/docker/homeassistant/volumes/homeassistant/zigbee2mqtt:/app/data
       - /run/udev:/run/udev:ro
     devices:
       - /dev/ttyACM0:/dev/ttyACM0
@@ -94,17 +94,3 @@ services:
       - TZ=Europe/Amsterdam
     depends_on:
       - mosquitto
-
-  zigbee2mqttAssistant:
-    image: carldebilly/zigbee2mqttassistant
-    container_name: zigbee2mqttAssistant
-    environment:
-      - Z2MA_SETTINGS__MQTTSERVER=${SERVER_ADDR}
-      - Z2MA_SETTINGS__MQTTUSERNAME=zigbee2mqtt
-      - Z2MA_SETTINGS__MQTTPASSWORD=${ZIGBEE2MQTT_MOSQUITTO_PASSWORD}
-      - TZ=Europe/Amsterdam
-    ports:
-      - 8880:80
-    restart: unless-stopped
-    depends_on:
-      - zigbee2mqtt
