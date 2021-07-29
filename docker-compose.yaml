@@ -1,4 +1,4 @@
-version: '3.7'
+version: "3.7"
 services:
   homeassistant:
     container_name: home-assistant
@@ -7,6 +7,7 @@ services:
       - /home/robert/docker/homeassistant/volumes/homeassistant:/config
       - /home/robert/docker/homeassistant/certificates:/config/certificates
       - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
     network_mode: host
     depends_on:
@@ -27,12 +28,12 @@ services:
       - /home/robert/docker/homeassistant/volumes/maria_db:/var/lib/mysql
     ports:
       - "3306:3306"
-    
+
   influxdb:
     image: influxdb:1.8
     restart: unless-stopped
     ports:
-      - '8086:8086'
+      - "8086:8086"
     volumes:
       - /home/robert/docker/homeassistant/volumes/influxdb:/var/lib/influxdb
     environment:
@@ -50,7 +51,7 @@ services:
       - "9001:9001"
     volumes:
       - /home/robert/docker/homeassistant/volumes/mosquitto/config:/mosquitto/config
-  
+
   appdaemon:
     container_name: appdaemon
     restart: unless-stopped
@@ -65,7 +66,7 @@ services:
     depends_on:
       - homeassistant
       - mosquitto
-  
+
   esphome:
     container_name: esphome
     image: esphome/esphome:latest
