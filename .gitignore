@@ -1,3 +1,4 @@
 .env
 /volumes
 /certificates
+/ssh_config

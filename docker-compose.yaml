@@ -4,6 +4,7 @@ services:
     container_name: home-assistant
     image: homeassistant/home-assistant
     volumes:
+      - /home/robert/docker/homeassistant/ssh_config/:/root/.ssh
       - /home/robert/docker/homeassistant/volumes/homeassistant:/config
       - /home/robert/docker/homeassistant/certificates:/config/certificates
       - /etc/localtime:/etc/localtime:ro
