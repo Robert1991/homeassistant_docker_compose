@@ -88,7 +88,7 @@ services:
       - /home/robert/docker/homeassistant/volumes/homeassistant/zigbee2mqtt:/app/data
       - /run/udev:/run/udev:ro
     devices:
-      - /dev/ttyACM0:/dev/ttyACM0
+      - /dev/ttyUSB0:/dev/ttyUSB0
     restart: always
     network_mode: host
     privileged: true
