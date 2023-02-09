@@ -53,21 +53,6 @@ services:
     volumes:
       - /home/robert/docker/homeassistant/volumes/mosquitto/config:/mosquitto/config
 
-  appdaemon:
-    container_name: appdaemon
-    restart: unless-stopped
-    image: acockburn/appdaemon:latest
-    ports:
-      - "5050:5050"
-    volumes:
-      - /home/robert/docker/homeassistant/volumes/appdaemon:/conf
-      - /home/robert/docker/homeassistant/volumes/homeassistant/appdaemon_apps:/conf/apps/home
-      - /home/robert/docker/homeassistant/volumes/homeassistant:/conf/homeassistant
-      - /etc/localtime:/etc/localtime:ro
-    depends_on:
-      - homeassistant
-      - mosquitto
-
   esphome:
     container_name: esphome
     image: esphome/esphome:latest
