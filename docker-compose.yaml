@@ -81,3 +81,22 @@ services:
       - TZ=Europe/Amsterdam
     depends_on:
       - mosquitto
+
+  nginx:
+    image: nginx:latest
+    container_name: home-assistant_nginx
+    ports:
+      - "443:443"
+    volumes:
+      - ./nginx.template.conf:/etc/nginx/nginx.template.conf:rw
+      - ./certificates:/etc/nginx/certs:ro
+    restart: unless-stopped
+    depends_on:
+      - homeassistant
+    environment:
+      - DOMAIN=${DUCKDNS_DOMAIN}
+      - SERVER_ADDR=${HASS_SERVER_ADDR}
+      - SSL_PORT=${SSL_PORT}
+    command: |
+      /bin/bash -c "envsubst '$${DOMAIN} $${SERVER_ADDR} $${SSL_PORT}' < /etc/nginx/nginx.template.conf > /etc/nginx/nginx.conf && exec nginx -g 'daemon off;'"
+
