@@ -52,6 +52,22 @@ services:
     volumes:
       - ${HOMEASSISTANT_BASE_PATH}/volumes/mosquitto/config:/mosquitto/config
 
+  prometheus:
+    image: prom/prometheus
+    container_name: home-assistant_prometheus
+    user: "1000:1000"
+    volumes:
+      - ${HOMEASSISTANT_BASE_PATH}/volumes/prometheus/:/prometheus
+      - ${HOMEASSISTANT_BASE_PATH}/volumes/prometheus:/etc/prometheus/
+      - ${HOMEASSISTANT_BASE_PATH}/volumes/homeassistant/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--web.enable-lifecycle"
+    ports:
+      - 9090:9090
+    networks:
+      - monitoring
 
   esphome:
     container_name: esphome
@@ -100,3 +116,6 @@ services:
     command: |
       /bin/bash -c "envsubst '$${DOMAIN} $${SERVER_ADDR} $${SSL_PORT}' < /etc/nginx/nginx.template.conf > /etc/nginx/nginx.conf && exec nginx -g 'daemon off;'"
 
+networks:
+  monitoring:
+    driver: bridge
