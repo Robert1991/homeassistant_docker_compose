@@ -4,9 +4,8 @@ services:
     container_name: home-assistant
     image: homeassistant/home-assistant
     volumes:
-      - /home/robert/docker/homeassistant/ssh_config/:/root/.ssh
-      - /home/robert/docker/homeassistant/volumes/homeassistant:/config
-      - /home/robert/docker/homeassistant/certificates:/config/certificates
+      - ${HOMEASSISTANT_BASE_PATH}/ssh_config/:/root/.ssh
+      - ${HOMEASSISTANT_BASE_PATH}/volumes/homeassistant:/config
       - /etc/localtime:/etc/localtime:ro
       - /var/run/docker.sock:/var/run/docker.sock
     restart: unless-stopped
@@ -26,7 +25,7 @@ services:
       MYSQL_USER: homeassistant
       MYSQL_PASSWORD: "${HA_MYSQL_PASSWORD}"
     volumes:
-      - /home/robert/docker/homeassistant/volumes/maria_db:/var/lib/mysql
+      - ${HOMEASSISTANT_BASE_PATH}/volumes/maria_db:/var/lib/mysql
     ports:
       - "3306:3306"
 
@@ -36,7 +35,7 @@ services:
     ports:
       - "8086:8086"
     volumes:
-      - /home/robert/docker/homeassistant/volumes/influxdb:/var/lib/influxdb
+      - ${HOMEASSISTANT_BASE_PATH}/volumes/influxdb:/var/lib/influxdb
     environment:
       - INFLUXDB_DB=db0
       - INFLUXDB_ADMIN_USER=${INFLUXDB_USERNAME}
@@ -51,7 +50,8 @@ services:
       - "1883:1883"
       - "9001:9001"
     volumes:
-      - /home/robert/docker/homeassistant/volumes/mosquitto/config:/mosquitto/config
+      - ${HOMEASSISTANT_BASE_PATH}/volumes/mosquitto/config:/mosquitto/config
+
 
   esphome:
     container_name: esphome
@@ -62,7 +62,7 @@ services:
     restart: unless-stopped
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /home/robert/docker/homeassistant/volumes/homeassistant/esphome:/config:rw
+      - ${HOMEASSISTANT_BASE_PATH}/volumes/homeassistant/esphome:/config:rw
     depends_on:
       - mosquitto
 
@@ -70,7 +70,7 @@ services:
     container_name: zigbee2mqtt
     image: koenkk/zigbee2mqtt
     volumes:
-      - /home/robert/docker/homeassistant/volumes/homeassistant/zigbee2mqtt:/app/data
+      - ${HOMEASSISTANT_BASE_PATH}/volumes/homeassistant/zigbee2mqtt:/app/data
       - /run/udev:/run/udev:ro
     devices:
       - /dev/ttyUSB0:/dev/ttyUSB0
