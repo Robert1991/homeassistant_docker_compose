@@ -17,7 +17,7 @@ services:
       - influxdb
 
   mariadb:
-    image: mariadb/server:10.3
+    image: mariadb:11
     container_name: mariadb
     restart: unless-stopped
     environment:
